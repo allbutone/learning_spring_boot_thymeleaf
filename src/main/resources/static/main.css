@@ -1,0 +1,19 @@
+table{
+    border-collapse:collapse;
+}
+
+td,th{
+    border:1px solid;
+    padding:0.5rem;
+    text-align: left;
+}
+
+.thumbnail{
+    max-width:75px;
+    max-height:75px;
+}
+
+.flash{
+    background: #ccaab4;
+    padding: 1em;/*one element*/
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>leanring spring boot video</title>
+    <link rel="stylesheet" href="/main.css"/>
+</head>
+<body>
+    <h3 class="flash" th:if="${#vars['flash.message']}" th:text="${#vars['flash.message']}"></h3>
+
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th> <th>Name</th> <th>Image</th><th>删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="image : ${page.content}">
+                <td th:text="${image.id}"></td>
+                <td th:text="${image.name}"></td>
+                <td>
+                    <img class="thumbnail" th:src="@{'/images/' + ${image.name} + '/raw'}"/>
+                </td>
+                <td>
+                    <!--
+                    thymeleaf 集成 spring 后，在渲染模板时，会将 th:method="delete" 渲染成如下形式：
+                        <form method="post" action="/images/借条模板.jpg"><input type="hidden" name="_method" value="delete" />
+                            <input type="submit" value="delete" />
+                        </form>
+                    -->
+                    <form th:method="delete" th:action="@{'/images/' + ${image.name}}">
+                        <input type="submit" value="delete"/>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <form method="post" action="/images" enctype="multipart/form-data">
+            <p><input name="file" type="file" /></p>
+            <p><input name="Upload" type="submit"/></p>
+        </form>
+        <h3 th:text="'page ' + ${page.number + 1} + ' of ' + ${page.totalPages}"></h3>
+        <h3 th:text="${page.size} + ' item(s)/page'"></h3>
+        <ul>
+            <li th:if="${prev}"><a th:href="@{/(size=${prev.pageSize},page=${prev.pageNumber})}">prev</a> </li>
+            <li th:if="${next}"><a th:href="@{/(size=${next.pageSize},page=${next.pageNumber})}">next</a> </li>
+        </ul>
+    </div>
+</body>
+</html>
