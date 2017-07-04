@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>leanring spring boot video</title>
@@ -7,6 +7,18 @@
     <script src="webjars/requirejs/2.2.0/require.js"/>
 </head>
 <body>
+
+    <h3>Security Info here:</h3>
+    <div>
+        <span sec:authentication="name"></span>
+        has authorities
+        <span sec:authentication="authorities"></span>
+        <form method="post" th:action="@{/logout}">
+            <input value="sign off" type="submit"/>
+        </form>
+    </div>
+
+
     <h3 class="flash" th:if="${#vars['flash.message']}" th:text="${#vars['flash.message']}"></h3>
 
     <div>
