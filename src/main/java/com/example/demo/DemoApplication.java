@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.metrics.repository.InMemoryMetricReposit
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionEvaluationReport;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -15,6 +16,7 @@ public class DemoApplication {
     }
 
     @Bean
+    @Profile("dev")
     CommandLineRunner autoConfigToConsole(ConditionEvaluationReport report) {
         return strings -> report.getConditionAndOutcomesBySource()
                 .entrySet().stream()

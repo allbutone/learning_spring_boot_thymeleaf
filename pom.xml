@@ -41,6 +41,42 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-remote-shell</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+<!--
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>requirejs</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>stompjs</artifactId>
+            <version>2.3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.webjars.npm</groupId>
+                    <artifactId>websocket</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>sockjs-client</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
 <!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

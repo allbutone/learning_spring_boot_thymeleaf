@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.FileSystemUtils;
@@ -29,11 +30,13 @@ public class ImageService {
 
     private ImageRepository imageRepository;
     private ResourceLoader resourceLoader;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public ImageService(ImageRepository imageRepository, ResourceLoader resourceLoader) {
+    public ImageService(ImageRepository imageRepository, ResourceLoader resourceLoader, SimpMessagingTemplate messagingTemplate) {
         this.imageRepository = imageRepository;
         this.resourceLoader = resourceLoader;
+        this.messagingTemplate = messagingTemplate;
     }
 
     Page<Image> findPage(Pageable pageable){
@@ -53,6 +56,7 @@ public class ImageService {
 //            nio Files and Paths
             Files.copy(file.getInputStream(), Paths.get(UPLOAD_ROOT, file.getOriginalFilename()));
             imageRepository.save(new Image(file.getOriginalFilename()));
+            messagingTemplate.convertAndSend("/topic/newImage", file.getOriginalFilename());
         }
     }
 
@@ -63,6 +67,11 @@ public class ImageService {
         }
         imageRepository.delete(byName);
         Files.deleteIfExists(Paths.get(UPLOAD_ROOT, filename));
+        messagingTemplate.convertAndSend("/topic/deleteImage", filename);
+
+//          只向某个 user 对应的客户端发送消息，否则默认发送事件到所有客户端，包括触发事件的客户端
+//          user 参数可以来源于 spring security
+//        messagingTemplate.convertAndSendToUser("user", "/topic/deleteImage", filename);
     }
 
     @Bean

@@ -1,0 +1,11 @@
+---
+applications:
+- name: boot_demo_2017
+  memory: 768M
+  instances: 1
+#  random-route: http://boot-demo-2017-untastable-glycerol.cfapps.io/
+#  random-route: true
+  random-route: false
+  env:
+      JAVA_OPTS: "-Xdebug -Xrunjdwp:server=y,transport=dt_socket,suspend=n"
+

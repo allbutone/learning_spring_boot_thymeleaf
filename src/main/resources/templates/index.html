@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <title>leanring spring boot video</title>
     <link rel="stylesheet" href="/main.css"/>
+    <script src="webjars/requirejs/2.2.0/require.js"/>
 </head>
 <body>
     <h3 class="flash" th:if="${#vars['flash.message']}" th:text="${#vars['flash.message']}"></h3>
@@ -48,5 +49,24 @@
             <li th:if="${next}"><a th:href="@{/(size=${next.pageSize},page=${next.pageNumber})}">next</a> </li>
         </ul>
     </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        (function () {
+            window.require(['webjars/stompjs/2.3.3/lib/stomp.js','webjars/sockjs-client/1.1.0/dist/sockjs'], function (xxx, SockJS) {
+                var redrawCurrentPage = function (message) {
+                    console.log(message);
+                    window.location = /*[[@{/(size=${page.size}, page=${page.number})}]]*/'';
+                };
+                var socket = SockJS("/imageMessages");
+                var stompClient = Stomp.over(socket);
+                stompClient.connect({/*optional headers*/}, function (frame) {
+                    stompClient.subscribe('/topic/newImage', redrawCurrentPage);
+                    stompClient.subscribe('/topic/deleteImage', redrawCurrentPage);
+                });
+            });
+        })();
+        /*]]>*/
+    </script>
 </body>
 </html>
