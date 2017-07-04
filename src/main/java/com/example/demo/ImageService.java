@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.FileSystemUtils;
@@ -31,12 +31,14 @@ public class ImageService {
     private ImageRepository imageRepository;
     private ResourceLoader resourceLoader;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ImageService(ImageRepository imageRepository, ResourceLoader resourceLoader, SimpMessagingTemplate messagingTemplate) {
+    public ImageService(ImageRepository imageRepository, ResourceLoader resourceLoader, SimpMessagingTemplate messagingTemplate, UserRepository userRepository) {
         this.imageRepository = imageRepository;
         this.resourceLoader = resourceLoader;
         this.messagingTemplate = messagingTemplate;
+        this.userRepository = userRepository;
     }
 
     Page<Image> findPage(Pageable pageable){
@@ -55,7 +57,7 @@ public class ImageService {
         if (!file.isEmpty()){
 //            nio Files and Paths
             Files.copy(file.getInputStream(), Paths.get(UPLOAD_ROOT, file.getOriginalFilename()));
-            imageRepository.save(new Image(file.getOriginalFilename()));
+            imageRepository.save(new Image(file.getOriginalFilename(), userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())));
             messagingTemplate.convertAndSend("/topic/newImage", file.getOriginalFilename());
         }
     }
@@ -80,14 +82,17 @@ public class ImageService {
         return args -> {
             prepareImageDirectory();
 
+            User tom = userRepository.save(new User("tom", "tom", "ROLE_USER", "ROLE_ADMIN"));
+            User jack = userRepository.save(new User("jack", "jack", "ROLE_USER"));
+
             FileCopyUtils.copy("Test file", new FileWriter(UPLOAD_ROOT + "/test"));//spring utils
-            imageRepository.save(new Image("test"));
+            imageRepository.save(new Image("test", tom));
 
             FileCopyUtils.copy("Test file2", new FileWriter(UPLOAD_ROOT + "/test2"));
-            imageRepository.save(new Image("test2"));
+            imageRepository.save(new Image("test2", tom));
 
             FileCopyUtils.copy("Test file3", new FileWriter(UPLOAD_ROOT + "/test3"));
-            imageRepository.save(new Image("test3"));
+            imageRepository.save(new Image("test3", tom));
         };
     }
 

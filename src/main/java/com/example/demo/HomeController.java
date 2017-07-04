@@ -25,7 +25,7 @@ import java.io.IOException;
  */
 @Controller
 public class HomeController {
-    private static final String BASE_PATH = "/images";
+    private static final String BASE_PATH = "/imgs";
     private static final String FILENAME = "{filename:.+}";
 
     private ImageService imageService;

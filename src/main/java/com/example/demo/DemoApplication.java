@@ -26,14 +26,6 @@ public class DemoApplication {
     }
 
     @Bean
-    CommandLineRunner initUsers(UserRepository userRepository) {
-        return strings -> {
-            userRepository.save(new User("tom", "tom", "ROLE_USER", "ROLE_ADMIN"));
-            userRepository.save(new User("jack", "jack", "ROLE_USER"));
-        };
-    }
-
-    @Bean
     InMemoryMetricRepository inMemoryMetricRepository(){
         return new InMemoryMetricRepository();
     }
