@@ -84,6 +84,7 @@ public class ImageService {
 
             User tom = userRepository.save(new User("tom", "tom", "ROLE_USER", "ROLE_ADMIN"));
             User jack = userRepository.save(new User("jack", "jack", "ROLE_USER"));
+            User david = userRepository.save(new User("david", "david", "ROLE_ADMIN"));
 
             FileCopyUtils.copy("Test file", new FileWriter(UPLOAD_ROOT + "/test"));//spring utils
             imageRepository.save(new Image("test", tom));

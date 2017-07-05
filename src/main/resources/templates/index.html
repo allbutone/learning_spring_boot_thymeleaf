@@ -13,28 +13,33 @@
         <span sec:authentication="name"></span>
         has authorities
         <span sec:authentication="authorities"></span>
-        <form method="post" th:action="@{/logout}">
+
+        <!--全面认证后，才展示 sign off 按钮-->
+        <form sec:authorize-expr="isFullyAuthenticated()" method="post" th:action="@{/logout}">
             <input value="sign off" type="submit"/>
         </form>
-    </div>
 
+        <!--如果没有全面认证，展示 sign on 表单-->
+        <form sec:authorize-expr="!isFullyAuthenticated()" method="post" th:action="@{/login}">
+            <label> User:<input type="text" name="username"/> </label>
+            <label> Password:<input type="password" name="password"/> </label>
+            <input type="submit" value="sign on"/>
+        </form>
+    </div>
+    <hr/>
 
     <h3 class="flash" th:if="${#vars['flash.message']}" th:text="${#vars['flash.message']}"></h3>
 
     <div>
         <table>
-            <thead>
-            <tr>
+            <thead><tr>
                 <th>ID</th> <th>Name</th> <th>Image</th><th>Owner</th><th>删除</th>
-            </tr>
-            </thead>
+            </tr></thead>
             <tbody>
             <tr th:each="image : ${page.content}">
                 <td th:text="${image.id}"></td>
                 <td th:text="${image.name}"></td>
-                <td>
-                    <img class="thumbnail" th:src="@{'/imgs/' + ${image.name} + '/raw'}"/>
-                </td>
+                <td><img class="thumbnail" th:src="@{'/imgs/' + ${image.name} + '/raw'}"/></td>
                 <td th:text="${image.owner.username}"></td>
                 <td>
                     <!--
@@ -42,19 +47,24 @@
                         <form method="post" action="/imgs/借条模板.jpg"><input type="hidden" name="_method" value="delete" />
                             <input type="submit" value="delete" />
                         </form>
+                    使用 th:action 也会自动为 form 生成隐藏的 csrf token field:
+                        <input type="hidden" name="_csrf" value="xxxxxx..."/>
                     -->
-                    <form th:method="delete" th:action="@{'/imgs/' + ${image.name}}">
+                    <!--认证后才展示删除按钮-->
+                    <form sec:authorize-expr="isFullyAuthenticated()" th:method="delete" th:action="@{'/imgs/' + ${image.name}}">
                         <input type="submit" value="delete"/>
                     </form>
                 </td>
             </tr>
             </tbody>
         </table>
-        <!--use th:action="@{/imgs} to generate hidden csrf token" -->
-        <form method="post" th:action="@{/imgs}" enctype="multipart/form-data">
+
+        <!--有上传权限，才展示上传功能区域-->
+        <form sec:authorize-url="POST /imgs" method="post" th:action="@{/imgs}" enctype="multipart/form-data">
             <p><input name="file" type="file" /></p>
-            <p><input name="Upload" type="submit"/></p>
+            <p><input name="Upload" type="submit" value="Upload"/></p>
         </form>
+
         <h3 th:text="'page ' + ${page.number + 1} + ' of ' + ${page.totalPages}"></h3>
         <h3 th:text="${page.size} + ' item(s)/page'"></h3>
         <ul>
