@@ -16,9 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 /**
  * Created by ren_xt
  */
-@EnableWebSecurity
 @Configuration
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@EnableWebSecurity//if you forgot to add this annotation, thymeleaf th:authorize-url fail to work
+//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;

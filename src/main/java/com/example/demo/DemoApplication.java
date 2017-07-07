@@ -15,6 +15,7 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 
+/*
     @Bean
     @Profile("dev")
     CommandLineRunner autoConfigToConsole(ConditionEvaluationReport report) {
@@ -24,6 +25,7 @@ public class DemoApplication {
                 .forEach(entry -> System.out.println(entry.getKey() + "==>Match?" + entry.getValue().isFullMatch()));
 //        org.springframework.boot.autoconfigure.aop.AopAutoConfiguration==>Match?true
     }
+*/
 
     @Bean
     InMemoryMetricRepository inMemoryMetricRepository(){
